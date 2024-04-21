@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:test_animation/model/score.dart';
+import 'package:test_animation/widgets/arrow_button.dart';
 import 'package:test_animation/widgets/circle_line.dart';
+import 'package:test_animation/widgets/control_widget.dart';
 import 'package:test_animation/widgets/detail_score_bar.dart';
 import 'package:test_animation/widgets/header_score.dart';
 
@@ -34,13 +36,15 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
   bool _isButtonShow = true;
   final double _defaultWidth = 2;
   final double _defaultHeight = 2;
-  final double _defaultBorderRadius = 16;
+  final double _defaultBorderRadius = 10;
   final double _maxHeight = 36;
   final double _maxWidth = 48;
   double _width = 2;
+  double _outboundWidth = 2;
   double _height = 2;
-  double _borderRadius = 40;
+  double _borderRadius = 10;
   Cubic animationCurve = Curves.slowMiddle;
+
 
   @override
   void initState() {
@@ -81,6 +85,11 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
       }
     });
     if(clickState) {
+      Future.delayed(Duration(milliseconds: (durationHide.inMilliseconds * 1.2 ).toInt() ), () {
+      setState(() {
+        _outboundWidth = _maxWidth * 0.8 ;
+      });
+      });
       await Future.delayed(Duration(milliseconds: (durationHide.inMilliseconds * 1.12).toInt() ), () {
       setState(() {
         _height = _maxHeight;
@@ -90,18 +99,23 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
 
     await Future.delayed(durationHide, () {
         setState(() {
-          _width = _maxWidth - _maxHeight * 0.1;
+          _width = _maxWidth - _maxWidth * 0.1;
         });
         
       });
-    await Future.delayed(durationHide * 0.2, () {
+    await Future.delayed(durationHide * 0.4, () {
           setState(() {
             _width = _maxWidth;
-            _borderRadius = 0 ;
+          });
+        });
+    await Future.delayed(durationHide * 0.3, () {
+          setState(() {
+            _width = _maxWidth * 1.6;
           });
         });
     } else {
       setState(() {
+        _outboundWidth = _defaultWidth;
         _height = _defaultHeight;
         _width = _defaultWidth;
         _borderRadius = _defaultBorderRadius;
@@ -117,6 +131,7 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
   Widget build(BuildContext context) {
     int maxScore = widget.scoreList.map((score) => score.score).toList().sublist(0, 3).fold(0, (accumulate, value) => accumulate + value);;
     int headerScore = ((maxScore / 300) * 100).toInt();
+    double hiddenContainerWidth = widget.width - 30;
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -129,7 +144,7 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
           Positioned(
             top: 190,
             child: SizedBox(
-              width: widget.width - 60,
+              width: hiddenContainerWidth,
               child: Stack(
                 children: [
                   Container(
@@ -147,22 +162,21 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
             top: 190,
             // bottom: 160,
             child: SizedBox(
-              width: widget.width - 60,
+              width: hiddenContainerWidth,
               height: 35,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // ...[0, 40, 100, 140, 999].map((left) {
-                  ...[16, 54, 90, 135].map((left) {
+                  ...[16, 54].map((left) {
                     return Positioned(
                         left: left.toDouble(),
                         child: SizedBox(
-                          width: 50,
+                          width: 70,
                           child: Center(
                             child: AnimatedContainer(
-                              duration: left == 16 ? durationHide * 0.95 : durationHide,
+                              duration: durationHide,
                               curve: animationCurve,
-                              width: left.toDouble() == 90 || left.toDouble() == 135 ? _width * 1.3 : _width,
+                              width: left == 16 ? _width + 2 : _width,
                               height: _height,
                               decoration: BoxDecoration(
                                   color: widget.parentBackgroundColor,
@@ -173,16 +187,34 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
                         ));
                   }),
 
-                  
+                  ...[80, 115].map((left) {
+                    return Positioned(
+                        left: left.toDouble(),
+                        child: SizedBox(
+                          width: 70,
+                          child: Center(
+                            child: AnimatedContainer(
+                              duration: durationHide,
+                              curve: animationCurve,
+                              width: _width * 1.1,
+                              height: _height,
+                              decoration: BoxDecoration(
+                                  color: widget.parentBackgroundColor,
+                                  borderRadius:
+                                      BorderRadius.circular(_borderRadius)),
+                            ),
+                          ),
+                        ));
+                  }),
 
                   ...[true, false].map((left) {
                     return Positioned(
                         left: left == isLeft ? -4 : null,
                         right: left == isLeft ? null : -4,
                         child: AnimatedContainer(
-                          duration: durationHide ,
-                          curve: Curves.easeOut,
-                          width: isClick ? _width : _defaultWidth ,
+                          duration: durationHide * 2.5 ,
+                          curve: Curves.slowMiddle,
+                          width: isClick ? _outboundWidth + 24  : _defaultWidth ,
                           height: 36,
                           decoration: BoxDecoration(
                               color: widget.parentBackgroundColor,
@@ -287,34 +319,7 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
           ),
 
           
-          // button arrow
-          _isButtonShow ?
-          AnimatedPositioned(
-            top: isClick ? 170 : 500,
-            duration: duration,
-            child: RotationTransition(
-              turns: Tween(begin: 0.0, end: 0.5).animate(_animationController),
-              child: ElevatedButton(
-                style: const ButtonStyle(
-                  padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                  maximumSize: MaterialStatePropertyAll(Size(50, 50)),
-                  minimumSize: MaterialStatePropertyAll(Size(50, 50)),
-                  alignment: Alignment.center,
-                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12)))),
-                  elevation: MaterialStatePropertyAll(8),
-                ),
-                onPressed: runAnimation,
-                child: const Center(
-                  child: Icon(
-                    Icons.expand_more_rounded,
-                    color: Colors.black,
-                    size: 20.0,
-                  ),
-                ),
-              ),
-            ),
-          )
-          : SizedBox(width: widget.width,),
+          
 
           Positioned(
             top: 170,
@@ -343,46 +348,28 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
           ),
       
           Positioned(
-            top: 600,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  style: const ButtonStyle(
-                    padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                    maximumSize: MaterialStatePropertyAll(Size(50, 50)),
-                    minimumSize: MaterialStatePropertyAll(Size(50, 50)),
-                    alignment: Alignment.center,
-                    shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))))
-                  ),
-                  onPressed: runAnimation,
-                  child: Center(
-                    child: Text(
-                      isClick ? 'Return': 'Play'
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 40),
-                  child: ElevatedButton(
-                    style: const ButtonStyle(
-                      padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                      maximumSize: MaterialStatePropertyAll(Size(50, 50)),
-                      minimumSize: MaterialStatePropertyAll(Size(50, 50)),
-                      alignment: Alignment.center,
-                      shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))))
-                    ),
-                    onPressed: showButton,
-                    child: Center(
-                      child: Text(
-                        _isButtonShow ? 'Hide': 'Show'
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            top: 560,
+            child: ControlWidget(
+              isClick: isClick, 
+              isButtonShow: _isButtonShow,
+              runAnimation: runAnimation,
+              showButton: showButton,
             ),
           ),
+
+          // button arrow
+          _isButtonShow ?
+          AnimatedPositioned(
+            top: isClick ? 170 : 500,
+            duration: duration,
+            child: RotationTransition(
+              turns: Tween(begin: 0.0, end: 0.5).animate(_animationController),
+              child: ArrowButton(
+                onPressed: runAnimation,
+              ),
+            ),
+          )
+          : SizedBox(width: widget.width,),
           
         ],
       ),
