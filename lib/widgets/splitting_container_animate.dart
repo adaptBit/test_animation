@@ -7,7 +7,7 @@ import 'package:test_animation/widgets/detail_score_bar.dart';
 import 'package:test_animation/widgets/header_score.dart';
 
 const durationSticky = Duration(milliseconds: 2200);
-const durationHide = Duration(milliseconds: 550);
+const durationHide = Duration(milliseconds: 560);
 const double outRight = -5;
 
 
