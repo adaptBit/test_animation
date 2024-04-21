@@ -42,7 +42,6 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
   double _width = 2;
   double _outboundWidth = 2;
   double _height = 2;
-  double _borderRadius = 10;
   Cubic animationCurve = Curves.slowMiddle;
 
 
@@ -118,7 +117,6 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
         _outboundWidth = _defaultWidth;
         _height = _defaultHeight;
         _width = _defaultWidth;
-        _borderRadius = _defaultBorderRadius;
       });
     }
     
@@ -131,7 +129,7 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
   Widget build(BuildContext context) {
     int maxScore = widget.scoreList.map((score) => score.score).toList().sublist(0, 3).fold(0, (accumulate, value) => accumulate + value);;
     int headerScore = ((maxScore / 300) * 100).toInt();
-    double hiddenContainerWidth = widget.width - 30;
+    double hiddenContainerWidth = widget.width - 36;
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -181,7 +179,7 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
                               decoration: BoxDecoration(
                                   color: widget.parentBackgroundColor,
                                   borderRadius:
-                                      BorderRadius.circular(_borderRadius)),
+                                      BorderRadius.circular(_defaultBorderRadius)),
                             ),
                           ),
                         ));
@@ -201,7 +199,7 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
                               decoration: BoxDecoration(
                                   color: widget.parentBackgroundColor,
                                   borderRadius:
-                                      BorderRadius.circular(_borderRadius)),
+                                      BorderRadius.circular(_defaultBorderRadius)),
                             ),
                           ),
                         ));
@@ -212,26 +210,20 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
                         left: left == isLeft ? -4 : null,
                         right: left == isLeft ? null : -4,
                         child: AnimatedContainer(
-                          duration: durationHide * 2.5 ,
+                          duration: durationHide * 3.5 ,
                           curve: Curves.slowMiddle,
                           width: isClick ? _outboundWidth + 24  : _defaultWidth ,
                           height: 36,
                           decoration: BoxDecoration(
                               color: widget.parentBackgroundColor,
                               // color: Colors.red,
-                              borderRadius:
-                                  BorderRadius.only(
-                                    topRight: Radius.circular(left == isLeft ? _borderRadius : 0),
-                                    bottomRight: Radius.circular(left == isLeft ? _borderRadius : 0),
-                                    topLeft: Radius.circular(left == isLeft ? 0 : _borderRadius),
-                                    bottomLeft: Radius.circular(left == isLeft ? 0 : _borderRadius),
-                                    )),
+                              borderRadius: BorderRadius.all(Radius.circular(_defaultBorderRadius),)
+                              ),
                         ));
                   }),
 
                   Positioned(
                         left: -4,
-                        right: null,
                         child: AnimatedContainer(
                           duration: durationHide,
                           curve: animationCurve,
@@ -239,11 +231,7 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
                           height: 36,
                           decoration: BoxDecoration(
                               color: widget.parentBackgroundColor,
-                              borderRadius:
-                                  BorderRadius.only(
-                                    topRight: Radius.circular( _borderRadius),
-                                    bottomRight: Radius.circular( _borderRadius),
-                                    )),
+                              borderRadius: BorderRadius.all(Radius.circular(_defaultBorderRadius),)),
                         )),
                   Positioned(
                         right: -4,
@@ -254,11 +242,7 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
                           height: 36,
                           decoration: BoxDecoration(
                               color: widget.parentBackgroundColor,
-                              borderRadius:
-                                  BorderRadius.only(
-                                    topLeft: Radius.circular( _borderRadius),
-                                    bottomLeft: Radius.circular( _borderRadius)
-                                    )),
+                              borderRadius: BorderRadius.all(Radius.circular(_defaultBorderRadius),)),
                         )),
                 ],
               ),
@@ -318,9 +302,6 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
               ),
           ),
 
-          
-          
-
           Positioned(
             top: 170,
             child: FadeTransition(
@@ -360,7 +341,7 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
           // button arrow
           _isButtonShow ?
           AnimatedPositioned(
-            top: isClick ? 170 : 500,
+            top: isClick ? 170 : 346,
             duration: duration,
             child: RotationTransition(
               turns: Tween(begin: 0.0, end: 0.5).animate(_animationController),

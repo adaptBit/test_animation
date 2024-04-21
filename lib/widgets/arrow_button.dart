@@ -14,7 +14,7 @@ class ArrowButton extends StatelessWidget {
         alignment: Alignment.center,
         shape: MaterialStatePropertyAll(RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(12)))),
-        elevation: MaterialStatePropertyAll(8),
+        elevation: MaterialStatePropertyAll(16),
       ),
       onPressed: onPressed,
       child: const Center(
