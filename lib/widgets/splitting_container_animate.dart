@@ -77,13 +77,9 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
     setState(() {
       isClick = clickState;
       _width = clickState ? 8 : 36;
-      if (clickState) {
-        _animationController.forward(from: _animationController.value);
-      } else {
-        _animationController.reverse(from: _animationController.value);
-      }
     });
     if(clickState) {
+      _animationController.forward(from: _animationController.value);
       Future.delayed(Duration(milliseconds: (durationHide.inMilliseconds * 1.2 ).toInt() ), () {
       setState(() {
         _outboundWidth = _maxWidth * 0.8 ;
@@ -113,6 +109,7 @@ class _SplittingContainerAnimateState extends State<SplittingContainerAnimate> w
           });
         });
     } else {
+      _animationController.reverse(from: _animationController.value);
       setState(() {
         _outboundWidth = _defaultWidth;
         _height = _defaultHeight;
